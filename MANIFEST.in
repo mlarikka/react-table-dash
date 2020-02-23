@@ -1,0 +1,7 @@
+include react_table_dash/react_table_dash.min.js
+include react_table_dash/react_table_dash.min.js.map
+include react_table_dash/metadata.json
+include react_table_dash/package-info.json
+include README.md
+include LICENSE
+include package.json

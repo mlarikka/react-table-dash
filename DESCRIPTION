@@ -1,0 +1,15 @@
+Package: reactTableDash
+Title: Dash component based on React Table v6
+Version: 0.0.1
+Authors @R: as.person(c(Mauri Larikka <mauri.larikka@gmail.com>))
+Description: Dash component based on React Table v6
+Depends: R (>= 3.0.2)
+Imports: 
+Suggests: 
+License: MIT + file LICENSE
+URL: https://github.com/mlarikka/react-table-dash
+BugReports: https://github.com/mlarikka/react-table-dash/issues
+Encoding: UTF-8
+LazyData: true
+Author: Mauri Larikka [aut]
+Maintainer: Mauri Larikka <mauri.larikka@gmail.com>

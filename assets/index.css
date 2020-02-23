@@ -1,0 +1,28 @@
+body {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    font-weight: 300;
+    font-size: 12px;
+    margin: 20px;
+  }
+  
+.ReactTable .rt-thead {
+  overflow-y: scroll;
+  font-size: 14px;
+}
+
+#main-container {
+  margin-top: 10px;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 14px;
+}
+
+.react-table-button {
+  /* background-color: aqua; */
+  /* height: 12px; */
+  padding: 1px 4px;
+  margin: 0px;
+}

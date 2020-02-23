@@ -1,0 +1,161 @@
+{
+  "src/lib/components/ReactTableDash.react.js": {
+    "description": "ReactTableDash is a wrapper for ReactTable v6",
+    "displayName": "ReactTableDash",
+    "methods": [
+      {
+        "name": "thresholdColor",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          },
+          {
+            "name": "thresholds",
+            "type": null
+          },
+          {
+            "name": "colors",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "progressBarCell",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "row",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "decimalCell",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "row",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "buttonClicked",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "label",
+            "type": null
+          },
+          {
+            "name": "data",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ],
+    "props": {
+      "id": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "The ID used to identify this component in Dash callbacks."
+      },
+      "data": {
+        "type": {
+          "name": "array"
+        },
+        "required": true,
+        "description": "Table data"
+      },
+      "columns": {
+        "type": {
+          "name": "array"
+        },
+        "required": true,
+        "description": "Table columns"
+      },
+      "className": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "Table class name"
+      },
+      "defaultPageSize": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "Default page size"
+      },
+      "style": {
+        "type": {
+          "name": "object"
+        },
+        "required": false,
+        "description": "Styles"
+      },
+      "showPagination": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "Showing pagination (bool)"
+      },
+      "showPaginationTop": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "Showing pagination on top (bool)"
+      },
+      "showPaginationBottom": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "Showing pagination at bottom (bool)"
+      },
+      "showPageSizeOptions": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "Page size options (list of integers)"
+      },
+      "pageSizeOptions": {
+        "type": {
+          "name": "array"
+        },
+        "required": false,
+        "description": "Page size options"
+      },
+      "filterable": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "Table is filterable (true/false)"
+      },
+      "setProps": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "Dash-assigned callback that should be called to report property changes\nto Dash, to make them available for callbacks."
+      }
+    }
+  }
+}
