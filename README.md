@@ -1,94 +1,156 @@
-# react table dash
+# ReactTableDash
 
-react table dash is a Dash component library.
+## Installation
 
-Get started with:
-1. Install Dash and its dependencies: https://dash.plot.ly/installation
-2. Run `python usage.py`
-3. Visit http://localhost:8050 in your web browser
+```
+pip install react-table-dash
+```
 
-## Contributing
+## Usage
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
+Example 
 
-### Install dependencies
+```
+import dash
+from dash.dependencies import Input, Output, State
+import dash_html_components as html
+import numpy as np
+import pandas as pd
+import dash_bootstrap_components as dbc
+import dash_core_components as dcc
+from react_table_dash import ReactTableDash
+from datetime import datetime
 
-If you have selected install_dependencies during the prompt, you can skip this part.
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app.config.suppress_callback_exceptions = True
 
-1. Install npm packages
-    ```
-    $ npm install
-    ```
-2. Create a virtual env and activate.
-    ```
-    $ virtualenv venv
-    $ . venv/bin/activate
-    ```
-    _Note: venv\Scripts\activate for windows_
 
-3. Install python packages required to build components.
-    ```
-    $ pip install -r requirements.txt
-    ```
-4. Install the python packages for testing (optional)
-    ```
-    $ pip install -r tests/requirements.txt
-    ```
+def random_data(n_cols, n_rows):
+    # Generate dummy data
+    alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    df = pd.DataFrame({alphabets[i]: np.random.rand(n_rows).tolist() for i in range(n_cols)})
+    if n_cols > 1:
+        df.loc[:, 'B'] = df.B - 0.5
 
-### Write your component code in `src/lib/components/ReactTableDash.react.js`.
+    data = df.to_dict(orient='records')
+    columns = [{'Header': 'Column {}'.format(c), 'accessor': c} for c in alphabets[:n_cols]]
 
-- The demo app is in `src/demo` and you will import your example component code into your demo app.
-- Test your code in a Python environment:
-    1. Build your code
-        ```
-        $ npm run build
-        ```
-    2. Run and modify the `usage.py` sample dash app:
-        ```
-        $ python usage.py
-        ```
-- Write tests for your component.
-    - A sample test is available in `tests/test_usage.py`, it will load `usage.py` and you can then automate interactions with selenium.
-    - Run the tests with `$ pytest tests`.
-    - The Dash team uses these types of integration tests extensively. Browse the Dash component code on GitHub for more examples of testing (e.g. https://github.com/plotly/dash-core-components)
-- Add custom styles to your component by putting your custom CSS files into your distribution folder (`react_table_dash`).
-    - Make sure that they are referenced in `MANIFEST.in` so that they get properly included when you're ready to publish your component.
-    - Make sure the stylesheets are added to the `_css_dist` dict in `react_table_dash/__init__.py` so dash will serve them automatically when the component suite is requested.
-- [Review your code](./review_checklist.md)
+    # Add custom column
+    columns.append({
+        'Header': 'Progress A',
+        'accessor': 'A',
+        'customType': {
+            'type': 'progressBar',
+            'thresholds': [0.2, 0.4, 0.6, 0.8],
+            'colors': ['#2dc937', '#99c140', '#e7b416', '#db7b2b', '#cc3232']
+        }
+    })
 
-### Create a production build and publish:
+    columns.append({
+        'Header': 'Decimal A',
+        'accessor': 'A',
+        'customType': {
+            'type': 'decimal',
+            'decimalPlaces': 2
+        }
+    })
 
-1. Build your code:
-    ```
-    $ npm run build
-    ```
-2. Create a Python tarball
-    ```
-    $ python setup.py sdist
-    ```
-    This distribution tarball will get generated in the `dist/` folder
+    columns.insert(0, {
+        'Header': 'Details',
+        'width': 65,
+        'customType': {'type': 'button', 'label': 'Details'}
+    })
 
-3. Test your tarball by copying it into a new environment and installing it locally:
-    ```
-    $ pip install react_table_dash-0.0.1.tar.gz
-    ```
+    return data, columns
 
-4. If it works, then you can publish the component to NPM and PyPI:
-    1. Publish on PyPI
-        ```
-        $ twine upload dist/*
-        ```
-    2. Cleanup the dist folder (optional)
-        ```
-        $ rm -rf dist
-        ```
-    3. Publish on NPM (Optional if chosen False in `publish_on_npm`)
-        ```
-        $ npm publish
-        ```
-        _Publishing your component to NPM will make the JavaScript bundles available on the unpkg CDN. By default, Dash serves the component library's CSS and JS locally, but if you choose to publish the package to NPM you can set `serve_locally` to `False` and you may see faster load times._
+col_slider = dbc.FormGroup([
+    dbc.Label("Columns", html_for="cols"),
+    dcc.Slider(id="n_cols", min=1, max=10, step=1, value=3),
+])
 
-5. Share your component with the community! https://community.plot.ly/c/dash
-    1. Publish this repository to GitHub
-    2. Tag your GitHub repository with the plotly-dash tag so that it appears here: https://github.com/topics/plotly-dash
-    3. Create a post in the Dash community forum: https://community.plot.ly/c/dash
+row_slider = dbc.FormGroup([
+    dbc.Label("Rows", html_for="rows"),
+    dcc.Slider(id="n_rows", min=100, max=10000, step=100, value=1000),
+])
+
+refresh_btn = dbc.Button('Refresh', id='refresh-btn', size='sm')
+dev_btn = dbc.Button('Dev', id='dev-btn', size='sm')
+
+app.layout = html.Div([
+        dbc.CardDeck([
+            dbc.Card([
+                dbc.CardBody([
+                    col_slider,
+                    row_slider,
+                    refresh_btn,
+                    dev_btn
+                ])
+            ]),
+            dbc.Card([
+                dbc.CardHeader([
+                    'Info'
+                ]),
+                dbc.CardBody([
+                    html.Div(id='output'),
+                    html.Div(id='output2')
+                ])
+            ])
+        ]),
+    dbc.Row([
+        dbc.Col([
+            html.Div(id='tbl-container')
+        ], width=12),
+    ], id='main-container'),
+])
+
+
+@app.callback(Output('output', 'children'),
+            [Input('refresh-btn', 'n_clicks')],
+            [State('n_cols', 'value'),
+             State('n_rows', 'value')])
+def output(n_clicks, n_cols, n_rows):
+    return 'columns = {}, rows = {}'.format(n_cols, n_rows)
+
+
+@app.callback(Output('output2', 'children'),
+            [Input('tbl', 'click')])
+def output2(tbl_value):
+    return 'Clicked row index: {}'.format(tbl_value)
+
+@app.callback(Output('tbl-container', 'children'),
+            [Input('refresh-btn', 'n_clicks')],
+            [State('n_cols', 'value'),
+             State('n_rows', 'value')])
+def load_table(n_clicks, n_cols, n_rows):
+    data, columns = random_data(n_cols, n_rows)
+    text = 'columns = {}, rows = {}'.format(n_cols, n_rows)
+    tbl = ReactTableDash(
+        id='tbl',
+        data=data,
+        columns=columns,
+        defaultPageSize=100,
+        className="-striped -highlight",
+        showPagination=True,
+        showPaginationTop=False,
+        showPaginationBottom=True,
+        showPageSizeOptions=True,
+        pageSizeOptions=[10, 20, 25, 50, 100, 500],
+        style={'height': '400px'},
+        filterable=True
+    )
+
+    return [
+        html.Div(tbl)
+    ]
+
+@app.callback([Output('tbl', 'data'), Output('tbl', 'columns')],
+            [Input('dev-btn', 'n_clicks')],
+            [State('n_cols', 'value'),
+             State('n_rows', 'value')])
+def load_data(n_clicks, n_cols, n_rows):
+    data, columns = random_data(n_cols, n_rows)
+    return data, columns
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
+```
