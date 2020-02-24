@@ -1,6 +1,6 @@
 Package: reactTableDash
 Title: Dash component based on React Table v6
-Version: 0.0.1
+Version: 0.0.2
 Authors @R: as.person(c(Mauri Larikka <mauri.larikka@gmail.com>))
 Description: Dash component based on React Table v6
 Depends: R (>= 3.0.2)

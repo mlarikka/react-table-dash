@@ -1,6 +1,6 @@
 {
   "name": "react_table_dash",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Dash component based on React Table v6",
   "repository": {
     "type": "git",

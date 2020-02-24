@@ -8,7 +8,7 @@ pip install react-table-dash
 
 ## Usage
 
-Example 
+Example app
 
 ```
 import dash
@@ -24,6 +24,7 @@ from datetime import datetime
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.config.suppress_callback_exceptions = True
 
+N_COLS, N_ROWS = 3, 1000
 
 def random_data(n_cols, n_rows):
     # Generate dummy data
@@ -57,7 +58,7 @@ def random_data(n_cols, n_rows):
 
     columns.insert(0, {
         'Header': 'Details',
-        'width': 65,
+        'width': 80,
         'customType': {'type': 'button', 'label': 'Details'}
     })
 
@@ -65,16 +66,34 @@ def random_data(n_cols, n_rows):
 
 col_slider = dbc.FormGroup([
     dbc.Label("Columns", html_for="cols"),
-    dcc.Slider(id="n_cols", min=1, max=10, step=1, value=3),
+    dcc.Slider(id="n_cols", min=1, max=10, step=1, value=N_COLS),
 ])
 
 row_slider = dbc.FormGroup([
     dbc.Label("Rows", html_for="rows"),
-    dcc.Slider(id="n_rows", min=100, max=10000, step=100, value=1000),
+    dcc.Slider(id="n_rows", min=100, max=10000, step=100, value=N_ROWS),
 ])
 
 refresh_btn = dbc.Button('Refresh', id='refresh-btn', size='sm')
 dev_btn = dbc.Button('Dev', id='dev-btn', size='sm')
+
+
+data, columns = random_data(N_COLS, N_ROWS)
+text = 'columns = {}, rows = {}'.format(N_COLS, N_ROWS)
+tbl = ReactTableDash(
+    id='tbl',
+    data=data,
+    columns=columns,
+    defaultPageSize=100,
+    className="-striped -highlight",
+    showPagination=True,
+    showPaginationTop=False,
+    showPaginationBottom=True,
+    showPageSizeOptions=True,
+    pageSizeOptions=[10, 20, 25, 50, 100, 500],
+    style={'height': '400px'},
+    filterable=True
+)
 
 app.layout = html.Div([
         dbc.CardDeck([
@@ -82,8 +101,7 @@ app.layout = html.Div([
                 dbc.CardBody([
                     col_slider,
                     row_slider,
-                    refresh_btn,
-                    dev_btn
+                    refresh_btn
                 ])
             ]),
             dbc.Card([
@@ -91,66 +109,32 @@ app.layout = html.Div([
                     'Info'
                 ]),
                 dbc.CardBody([
-                    html.Div(id='output'),
+                    html.Div(text, id='output'),
                     html.Div(id='output2')
                 ])
             ])
         ]),
     dbc.Row([
         dbc.Col([
-            html.Div(id='tbl-container')
+            html.Div(tbl, id='tbl-container')
         ], width=12),
     ], id='main-container'),
 ])
-
-
-@app.callback(Output('output', 'children'),
-            [Input('refresh-btn', 'n_clicks')],
-            [State('n_cols', 'value'),
-             State('n_rows', 'value')])
-def output(n_clicks, n_cols, n_rows):
-    return 'columns = {}, rows = {}'.format(n_cols, n_rows)
-
 
 @app.callback(Output('output2', 'children'),
             [Input('tbl', 'click')])
 def output2(tbl_value):
     return 'Clicked row index: {}'.format(tbl_value)
 
-@app.callback(Output('tbl-container', 'children'),
+@app.callback([Output('tbl', 'data'), Output('tbl', 'columns'), Output('output', 'children')],
             [Input('refresh-btn', 'n_clicks')],
-            [State('n_cols', 'value'),
-             State('n_rows', 'value')])
-def load_table(n_clicks, n_cols, n_rows):
-    data, columns = random_data(n_cols, n_rows)
-    text = 'columns = {}, rows = {}'.format(n_cols, n_rows)
-    tbl = ReactTableDash(
-        id='tbl',
-        data=data,
-        columns=columns,
-        defaultPageSize=100,
-        className="-striped -highlight",
-        showPagination=True,
-        showPaginationTop=False,
-        showPaginationBottom=True,
-        showPageSizeOptions=True,
-        pageSizeOptions=[10, 20, 25, 50, 100, 500],
-        style={'height': '400px'},
-        filterable=True
-    )
-
-    return [
-        html.Div(tbl)
-    ]
-
-@app.callback([Output('tbl', 'data'), Output('tbl', 'columns')],
-            [Input('dev-btn', 'n_clicks')],
             [State('n_cols', 'value'),
              State('n_rows', 'value')])
 def load_data(n_clicks, n_cols, n_rows):
     data, columns = random_data(n_cols, n_rows)
-    return data, columns
+    return data, columns, 'columns = {}, rows = {}'.format(n_cols, n_rows)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
 ```

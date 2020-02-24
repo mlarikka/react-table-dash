@@ -11,10 +11,6 @@ export default class ReactTableDash extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            data: props.data,
-            columns: props.columns
-        }
         this.thresholdColor = this.thresholdColor.bind(this);
         this.progressBarCell = this.progressBarCell.bind(this);
         this.decimalCell = this.decimalCell.bind(this);
@@ -69,7 +65,7 @@ export default class ReactTableDash extends Component {
     }
 
     render() {
-        var columns = this.state.columns;
+        var columns = this.props.columns;
         for(let i = 0; i < columns.length; i++){
             if ('decimals' in columns[i]) {
                 columns[i].Cell = row => (this.customCell(row));
